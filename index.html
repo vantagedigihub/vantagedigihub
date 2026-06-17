@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vantage Digital Hub</title>
+    <link rel="icon" type="image/png" href="images/logo-digi.png">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #060606;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: auto;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff6a00;
+            border-radius: 10px;
+        }
+
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-follower {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background 0.2s;
+            mix-blend-mode: screen;
+            will-change: transform;
+        }
+        .cursor-follower.active {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.18) 0%, transparent 70%);
+        }
+
+        /* ===== SCROLL PROGRESS ===== */
+        .progress-bar-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            z-index: 9999;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff6a00, #ff9a44);
+            box-shadow: 0 0 20px rgba(255, 106, 0, 0.4);
+            transition: width 0.15s ease-out;
+        }
+
+        /* ===== REVEAL UTILITY ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) scale(0.96);
+            transition: all 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-80px);
+            transition: all 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(80px);
+            transition: all 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8) rotate(-2deg);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        /* ===== ORANGE THEME ===== */
+        .orange {
+            color: #ff6a00;
+        }
+        .orange-glow {
+            color: #ff6a00;
+            text-shadow: 0 0 40px rgba(255, 106, 0, 0.2), 0 0 80px rgba(255, 106, 0, 0.08);
+        }
+        .bg-orange {
+            background: #ff6a00;
+        }
+        .btn-orange {
+            background: linear-gradient(135deg, #ff6a00, #e85d00);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 14px 40px;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 30px rgba(255, 106, 0, 0.15);
+        }
+        .btn-orange:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 50px rgba(255, 106, 0, 0.35);
+            color: #fff;
+        }
+        .btn-orange::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+            transform: scale(0);
+            transition: transform 0.6s;
+        }
+        .btn-orange:hover::after {
+            transform: scale(1);
+        }
+
+        .btn-outline-orange {
+            background: transparent;
+            border: 2px solid rgba(255, 106, 0, 0.3);
+            color: #ff6a00;
+            font-weight: 600;
+            padding: 12px 34px;
+            border-radius: 50px;
+            transition: all 0.4s;
+            backdrop-filter: blur(4px);
+        }
+        .btn-outline-orange:hover {
+            background: #ff6a00;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(255, 106, 0, 0.2);
+            transform: translateY(-3px);
+            border-color: #ff6a00;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: rgba(6, 6, 6, 0.5);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 106, 0, 0.05);
+            padding: 24px 0;
+            transition: all 0.4s;
+            z-index: 999;
+        }
+        .navbar-brand img {
+            height: 68px;
+            display: block;
+            max-width: 180px;
+        }
+        .navbar.scrolled {
+            background: rgba(6, 6, 6, 0.92);
+            box-shadow: 0 8px 60px rgba(0, 0, 0, 0.6);
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ff6a00, #ff9a44);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 30%;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6a00, transparent);
+            border-radius: 10px;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 140px 0 80px;
+        }
+
+        /* Morphing Blob */
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.15), rgba(255, 106, 0, 0.02) 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: blobMove 20s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blob:nth-child(1) {
+            top: -10%;
+            right: -10%;
+            animation-duration: 25s;
+        }
+        .blob:nth-child(2) {
+            bottom: -10%;
+            left: -10%;
+            animation-duration: 18s;
+            animation-delay: -5s;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.08), transparent 70%);
+        }
+        @keyframes blobMove {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            33% {
+                transform: translate(60px, -40px) scale(1.1) rotate(5deg);
+            }
+            66% {
+                transform: translate(-30px, 50px) scale(0.9) rotate(-3deg);
+            }
+            100% {
+                transform: translate(20px, -20px) scale(1.05) rotate(4deg);
+            }
+        }
+
+        /* Particles canvas overlay */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 106, 0, 0.08);
+            border: 1px solid rgba(255, 106, 0, 0.15);
+            padding: 6px 24px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #ff6a00;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+            animation: pulseBadge 3s ease-in-out infinite;
+        }
+        @keyframes pulseBadge {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 106, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 30px 6px rgba(255, 106, 0, 0.04);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 9vw, 5.6rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -3px;
+            margin-top: 16px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, #ff6a00, #ffb347, #ff6a00);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerText 5s ease-in-out infinite;
+        }
+        @keyframes shimmerText {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero-sub {
+            font-size: 1.25rem;
+            max-width: 560px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.8;
+            margin: 20px 0 36px;
+            font-weight: 300;
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.12);
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: floatDown 2.4s ease-in-out infinite;
+        }
+        .hero-scroll-indicator .mouse {
+            width: 22px;
+            height: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            position: relative;
+        }
+        .hero-scroll-indicator .mouse::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 10px;
+            background: #ff6a00;
+            border-radius: 10px;
+            animation: scrollWheel 2s ease-in-out infinite;
+        }
+        @keyframes scrollWheel {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-50%) translateY(14px);
+                opacity: 0.2;
+            }
+        }
+        @keyframes floatDown {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(6px);
+            }
+        }
+
+        /* ===== MARQUEE ===== */
+        .marquee-wrap {
+            overflow: hidden;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 106, 0, 0.04);
+            border-bottom: 1px solid rgba(255, 106, 0, 0.04);
+            background: rgba(255, 106, 0, 0.02);
+        }
+        .marquee-track {
+            display: flex;
+            gap: 60px;
+            animation: marqueeScroll 30s linear infinite;
+            width: max-content;
+        }
+        .marquee-track span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.06);
+            white-space: nowrap;
+        }
+        .marquee-track .highlight-mq {
+            color: rgba(255, 106, 0, 0.2);
+        }
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+        }
+        .section-subtitle {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto 48px;
+        }
+
+        /* ===== ABOUT ===== */
+        .about-card {
+            background: rgba(16, 16, 16, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 106, 0, 0.04);
+            border-radius: 28px;
+            padding: 44px 36px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            height: 100%;
+            will-change: transform;
+        }
+        .about-card:hover {
+            border-color: rgba(255, 106, 0, 0.12);
+            transform: translateY(-6px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        }
+        .about-card .icon {
+            font-size: 2.6rem;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+        .about-card h5 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .about-card p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ===== TEAM / CARDS ===== */
+        .team-card {
+            background: rgba(14, 14, 14, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 106, 0, 0.05);
+            border-radius: 32px;
+            padding: 16px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            height: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        .team-card:hover {
+            border-color: rgba(255, 106, 0, 0.2);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 106, 0, 0.02);
+        }
+        .team-card img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 24px;
+            border: 2px solid rgba(255, 106, 0, 0.05);
+            background-color: #111;
+            transition: all 0.5s;
+        }
+        .team-card:hover img {
+            border-color: rgba(255, 106, 0, 0.15);
+        }
+        .team-card .card-body {
+            padding: 24px 20px 20px;
+        }
+        .team-card .role {
+            color: #ff6a00;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .team-card .name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+        .team-card .bio {
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.7;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+        .team-card .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .team-card .contact-info span {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .team-card .contact-info span strong {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        @media (max-width: 991px) {
+            .team-card {
+                padding: 12px;
+            }
+            .team-card .card-body {
+                padding: 16px 12px 12px;
+            }
+            .team-card .name {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* ===== SERVICES ===== */
+        .service-card {
+            background: rgba(14, 14, 14, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            padding: 40px 30px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            will-change: transform;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 106, 0, 0.04), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        .service-card:hover::before {
+            opacity: 1;
+        }
+        .service-card:hover {
+            border-color: rgba(255, 106, 0, 0.12);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .service-card .icon {
+            font-size: 2.4rem;
+            margin-bottom: 14px;
+            display: inline-block;
+        }
+        .service-card h5 {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .service-card p {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+        .service-card .glow-line {
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6a00, transparent);
+            border-radius: 10px;
+            margin: 14px 0 18px;
+            transition: width 0.5s;
+        }
+        .service-card:hover .glow-line {
+            width: 70px;
+        }
+
+        /* ===== PRICING (SWIPER) ===== */
+        .pricing-wrapper {
+            position: relative;
+            padding: 0 10px;
+        }
+        .swiper-pricing {
+            padding: 20px 0 50px;
+            overflow: visible;
+        }
+        .swiper-pricing .swiper-slide {
+            height: auto;
+        }
+
+        .pricing-card {
+            background: rgba(14, 14, 14, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 28px;
+            padding: 40px 30px 34px;
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            will-change: transform;
+        }
+        .pricing-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.02), transparent 70%);
+            pointer-events: none;
+        }
+        .pricing-card:hover {
+            border-color: rgba(255, 106, 0, 0.12);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        }
+        .pricing-card.featured {
+            border-color: rgba(255, 106, 0, 0.25);
+            background: rgba(20, 14, 8, 0.9);
+            box-shadow: 0 0 60px rgba(255, 106, 0, 0.03);
+        }
+        .pricing-card.featured .featured-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: linear-gradient(135deg, #ff6a00, #e85d00);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .pricing-card .plan-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ff6a00;
+            letter-spacing: -0.3px;
+        }
+        .pricing-card .price {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin: 12px 0 4px;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+        .pricing-card .price small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .pricing-card .desc {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .pricing-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px;
+            flex: 1;
+        }
+        .pricing-card ul li {
+            padding: 6px 0;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .pricing-card ul li::before {
+            content: '✦';
+            color: #ff6a00;
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+        .pricing-card .btn-card {
+            width: 100%;
+            margin-top: auto;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            background: rgba(255, 106, 0, 0.06);
+            border: 1px solid rgba(255, 106, 0, 0.1);
+            color: #fff;
+            transition: all 0.4s;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+        .pricing-card .btn-card:hover {
+            background: #ff6a00;
+            border-color: #ff6a00;
+            color: #fff;
+            box-shadow: 0 8px 40px rgba(255, 106, 0, 0.2);
+            transform: scale(1.02);
+        }
+        .pricing-card.featured .btn-card {
+            background: #ff6a00;
+            border-color: #ff6a00;
+            color: #fff;
+        }
+        .pricing-card.featured .btn-card:hover {
+            background: #ff7a1a;
+            box-shadow: 0 8px 50px rgba(255, 106, 0, 0.3);
+            transform: scale(1.03);
+        }
+
+        /* Swiper nav */
+        .swiper-pricing-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .swiper-pricing-nav .swiper-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.4rem;
+            transition: all 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+        .swiper-pricing-nav .swiper-btn:hover {
+            background: rgba(255, 106, 0, 0.08);
+            border-color: rgba(255, 106, 0, 0.15);
+            color: #ff6a00;
+            transform: scale(1.05);
+        }
+
+        /* Swiper pagination dots */
+        .swiper-pagination-custom {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .swiper-pagination-custom .swiper-pagination-bullet {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            transition: all 0.5s;
+            cursor: pointer;
+            opacity: 1;
+        }
+        .swiper-pagination-custom .swiper-pagination-bullet-active {
+            background: #ff6a00;
+            width: 32px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255, 106, 0, 0.2);
+        }
+
+        /* ===== CONTACT ===== */
+        .contact-wrapper {
+            background: rgba(14, 14, 14, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 106, 0, 0.04);
+            border-radius: 32px;
+            padding: 52px 44px;
+            transition: all 0.5s;
+        }
+        .contact-wrapper:hover {
+            border-color: rgba(255, 106, 0, 0.06);
+        }
+        .form-control {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: #fff;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            transition: all 0.4s;
+        }
+        .form-control:focus {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #ff6a00;
+            box-shadow: 0 0 0 6px rgba(255, 106, 0, 0.04);
+            color: #fff;
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.12);
+        }
+        .form-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+        }
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 44px 0 34px;
+            margin-top: 40px;
+        }
+        .footer .contact-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px 40px;
+            margin-bottom: 24px;
+        }
+        .footer .contact-details span {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        .footer .contact-details span strong {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+        }
+        .footer .socials {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .footer .socials a {
+            color: rgba(255, 255, 255, 0.06);
+            font-size: 1.1rem;
+            transition: all 0.4s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            text-decoration: none;
+        }
+        .footer .socials a:hover {
+            color: #ff6a00;
+            border-color: rgba(255, 106, 0, 0.08);
+            transform: translateY(-4px);
+        }
+        .footer p {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.06);
+            letter-spacing: 1px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 120px 0 60px;
+                min-height: 90vh;
+            }
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            .hero-sub {
+                font-size: 1rem;
+            }
+            .about-card {
+                padding: 30px 24px;
+            }
+            .contact-wrapper {
+                padding: 32px 20px;
+            }
+            .pricing-card {
+                padding: 28px 22px;
+            }
+            .section {
+                padding: 60px 0;
+            }
+            .cursor-follower {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+            .footer .contact-details {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .btn-orange {
+                padding: 12px 28px;
+                font-size: 0.9rem;
+            }
+            .pricing-card .price {
+                font-size: 2.2rem;
+            }
+            .marquee-track span {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ===== UTILITY ===== */
+        .section-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        .section-glow::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.02), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .section-glow:nth-child(odd)::before {
+            top: -150px;
+            right: -150px;
+        }
+        .section-glow:nth-child(even)::before {
+            bottom: -150px;
+            left: -150px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== CURSOR FOLLOWER ===== -->
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <!-- ===== SCROLL PROGRESS ===== -->
+    <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top px-3 px-md-5" id="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="images/logo-digi.png" alt="Vantage logo" style="height:68px; object-fit:contain;" />
+            </a>
+            <div class="d-flex gap-2">
+                <a href="#contact" class="btn btn-orange btn-sm d-none d-md-inline-block" style="padding:8px 28px;font-size:0.8rem;">Get Started</a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item d-md-none"><a href="#contact" class="btn btn-orange w-100 mt-2" style="padding:10px;">Get Started</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="home">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <canvas id="particles-canvas"></canvas>
+
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="hero-badge reveal visible">🚀 Next-Gen Digital Agency</div>
+                    <h1 class="reveal visible" style="transition-delay:0.05s;">
+                        Grow your brand with<br />
+                        <span class="highlight">Vantage Digital Hub</span>
+                    </h1>
+                    <p class="hero-sub mx-auto reveal visible" style="transition-delay:0.15s;">
+                        We help businesses scale with modern digital marketing, branding, and online growth strategies that actually deliver.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center reveal visible" style="transition-delay:0.25s;">
+                        <a href="#contact" class="btn btn-orange">Start Your Growth</a>
+                        <a href="#services" class="btn btn-outline-orange">Explore Services</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-scroll-indicator">
+            <span>Scroll</span>
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <!-- ===== MARQUEE ===== -->
+    <div class="marquee-wrap">
+        <div class="marquee-track" id="marqueeTrack">
+            <span>VANTAGE DIGITAL HUB</span>
+            <span class="highlight-mq">✦</span>
+            <span>GROWTH · INNOVATION · IMPACT</span>
+            <span class="highlight-mq">✦</span>
+            <span>VANTAGE DIGITAL HUB</span>
+            <span class="highlight-mq">✦</span>
+            <span>GROWTH · INNOVATION · IMPACT</span>
+            <span class="highlight-mq">✦</span>
+            <!-- cloned for seamless loop -->
+            <span>VANTAGE DIGITAL HUB</span>
+            <span class="highlight-mq">✦</span>
+            <span>GROWTH · INNOVATION · IMPACT</span>
+            <span class="highlight-mq">✦</span>
+        </div>
+    </div>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="section section-glow" id="about" style="padding:100px 0;">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="hero-badge" style="margin-bottom:12px;">About Us</span>
+                <h2 class="section-title reveal">Built for <span class="orange-glow">Growth</span></h2>
+                <p class="section-subtitle reveal">We combine design, marketing, and data to turn your brand into a growth machine.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 reveal-left">
+                    <div class="about-card">
+                        <div class="icon">🎯</div>
+                        <h5>Strategic Approach</h5>
+                        <p>Vantage Digital Hub is a modern digital marketing agency focused on helping businesses build strong online presence, attract clients, and increase conversions through smart strategies.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 reveal-right">
+                    <div class="about-card">
+                        <div class="icon">⚡</div>
+                        <h5>Data-Driven Results</h5>
+                        <p>We combine design, marketing, and data-driven strategies to deliver real results. Our goal is simple: turn your brand into a growth machine that scales.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TEAM (ZIGZAG LAYOUT) ===== -->
+    <section class="section" id="team" style="padding:80px 0;background:rgba(255,106,0,0.005);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="hero-badge" style="margin-bottom:12px;">Our Team</span>
+                <h2 class="section-title reveal">Meet the <span class="orange-glow">Creators</span></h2>
+                <p class="section-subtitle reveal">The minds behind the magic, dedicated to your success.</p>
+            </div>
+
+            <!-- Card 1: Image Left, Text Right -->
+            <div class="row align-items-center g-5 mb-5 reveal" style="transition-delay:0.05s;">
+                <div class="col-lg-6">
+                    <div class="team-card">
+                        <img src="images/amin.photo.jpg" alt="Amine Chhaibi" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="team-card h-100 d-flex flex-column justify-content-center">
+                        <div class="card-body">
+                            <div class="role">Head of Design &amp; Content</div>
+                            <div class="name">Amine Chhaibi</div>
+                            <p class="bio">Leads all visual direction and content production — from concept and post design to photo and video editing. Amine crafts polished, on-brand visuals and micro-interactions that elevate campaigns and engage audiences.</p>
+                            <div class="contact-info">
+                                <span><strong>Email:</strong> chhaibimohamedamin@gmail.com</span>
+                                <span><strong>Insta:</strong> @aminechhaibi__01</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Image Right, Text Left -->
+            <div class="row align-items-center g-5 mb-5 reveal" style="transition-delay:0.15s;">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="team-card">
+                        <img src="images/aziz.photo.jpg" alt="Aziz Ghazouani" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <div class="team-card h-100 d-flex flex-column justify-content-center">
+                        <div class="card-body">
+                            <div class="role">Instagram Admin &amp; Community Manager</div>
+                            <div class="name">Mohamed Aziz Ghazouani</div>
+                            <p class="bio">Manages our Instagram presence and community — handling customer service, post scheduling, and day-to-day engagement. Aziz keeps the content calendar organized and ensures followers receive timely, helpful responses.</p>
+                            <div class="contact-info">
+                                <span><strong>Email:</strong> ghazouanimohamedaziz671@gmail.com</span>
+                                <span><strong>Insta:</strong> @heyy.levii</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Image Left, Text Right -->
+            <div class="row align-items-center g-5 reveal" style="transition-delay:0.25s;">
+                <div class="col-lg-6">
+                    <div class="team-card">
+                        <img src="images/razi.photo.jpg" alt="Razi Kouas" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="team-card h-100 d-flex flex-column justify-content-center">
+                        <div class="card-body">
+                            <div class="role">Technical Lead &amp; Developer</div>
+                            <div class="name">Razi Kouas</div>
+                            <p class="bio">Responsible for all technical and development work for clients — building websites, integrations, and custom features. Razi ensures stable deployments, performance, and scalable technical solutions that match design and business needs.</p>
+                            <div class="contact-info">
+                                <span><strong>Email:</strong> kouasrazi2@gmail.com</span>
+                                <span><strong>Insta:</strong> @its_leon_404</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== SERVICES ===== -->
+    <section class="section section-glow" id="services" style="padding:80px 0;background:rgba(255,106,0,0.005);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="hero-badge" style="margin-bottom:12px;">What We Do</span>
+                <h2 class="section-title reveal">Our <span class="orange-glow">Services</span></h2>
+                <p class="section-subtitle reveal">End-to-end digital solutions crafted to elevate your brand.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 reveal" style="transition-delay:0.05s;">
+                    <div class="service-card" data-tilt>
+                        <div class="icon">📱</div>
+                        <h5>Social Media Marketing</h5>
+                        <div class="glow-line"></div>
+                        <p>Grow your audience and engagement across all major platforms with content that resonates.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 reveal" style="transition-delay:0.15s;">
+                    <div class="service-card" data-tilt>
+                        <div class="icon">🎨</div>
+                        <h5>Brand Identity</h5>
+                        <div class="glow-line"></div>
+                        <p>Build a strong, memorable brand presence that sets you apart from the competition.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 reveal" style="transition-delay:0.25s;">
+                    <div class="service-card" data-tilt>
+                        <div class="icon">💰</div>
+                        <h5>Paid Ads</h5>
+                        <div class="glow-line"></div>
+                        <p>Run high-converting ad campaigns that bring measurable results and maximize ROI.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PRICING (SWIPER) ===== -->
+    <section class="section" id="pricing" style="padding:80px 0;overflow:hidden;">
+        <div class="container">
+            <div class="text-center mb-4">
+                <span class="hero-badge" style="margin-bottom:12px;">Pricing Plans</span>
+                <h2 class="section-title reveal">Choose Your <span class="orange-glow">Plan</span></h2>
+                <p class="section-subtitle reveal">Flexible pricing tailored to your business needs. Swipe to explore.</p>
+            </div>
+
+            <div class="pricing-wrapper reveal" style="transition-delay:0.1s;">
+                <div class="swiper swiper-pricing">
+                    <div class="swiper-wrapper">
+
+                        <!-- Card 1: Social Media Management -->
+                        <div class="swiper-slide">
+                            <div class="pricing-card" data-tilt data-plan="Social Media Management" data-price="150 TND">
+                                <div class="plan-name">Social Media Management</div>
+                                <div class="price">150 TND</div>
+                                <div class="desc">We manage your Instagram professionally so you can focus on your business</div>
+                                <ul>
+                                    <li>Content creation</li>
+                                    <li>Post design</li>
+                                    <li>Captions &amp; hashtags</li>
+                                    <li>Page optimization</li>
+                                </ul>
+                                <button class="btn-card get-started-btn">Get Started</button>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Website Development (featured) -->
+                        <div class="swiper-slide">
+                            <div class="pricing-card featured" data-tilt data-plan="Website Development" data-price="300 TND+">
+                                <span class="featured-badge">🔥 Popular</span>
+                                <div class="plan-name">Website Development</div>
+                                <div class="price">300 TND <small>+</small></div>
+                                <div class="desc">We build modern websites that turn visitors into customers</div>
+                                <ul>
+                                    <li>Business Websites</li>
+                                    <li>Mobile-friendly design</li>
+                                    <li>WhatsApp Integration</li>
+                                    <li>Google Maps setup</li>
+                                    <li>Basic SEO</li>
+                                </ul>
+                                <button class="btn-card get-started-btn">Get Started</button>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Instagram Ads -->
+                        <div class="swiper-slide">
+                            <div class="pricing-card" data-tilt data-plan="Instagram Ads" data-price="150 TND + monthly">
+                                <div class="plan-name">Instagram Ads</div>
+                                <div class="price">150 TND <small>+ monthly</small></div>
+                                <div class="desc">We help you reach real customers in your city</div>
+                                <ul>
+                                    <li>Ad setup &amp; management</li>
+                                    <li>Local targeting</li>
+                                    <li>Campaign optimization</li>
+                                    <li>Performance reporting</li>
+                                </ul>
+                                <button class="btn-card get-started-btn">Get Started</button>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Branding & Design -->
+                        <div class="swiper-slide">
+                            <div class="pricing-card" data-tilt data-plan="Branding &amp; Design" data-price="600 TND+">
+                                <div class="plan-name">Branding &amp; Design</div>
+                                <div class="price">600 TND <small>+</small></div>
+                                <div class="desc">We create a strong identity for your business</div>
+                                <ul>
+                                    <li>Logo design</li>
+                                    <li>Brand colors &amp; identity</li>
+                                    <li>Social media Visuals</li>
+                                </ul>
+                                <button class="btn-card get-started-btn">Get Started</button>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Content Creation -->
+                        <div class="swiper-slide">
+                            <div class="pricing-card" data-tilt data-plan="Content Creation" data-price="250 TND+">
+                                <div class="plan-name">Content Creation</div>
+                                <div class="price">250 TND <small>+</small></div>
+                                <div class="desc">We create engaging videos that attract attention</div>
+                                <ul>
+                                    <li>Reels for Instagram</li>
+                                    <li>Editing &amp; captions</li>
+                                    <li>Product showcasing</li>
+                                </ul>
+                                <button class="btn-card get-started-btn">Get Started</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Custom navigation -->
+                <div class="swiper-pricing-nav">
+                    <div class="swiper-btn" id="prevPricing">‹</div>
+                    <div class="swiper-btn" id="nextPricing">›</div>
+                </div>
+                <div class="swiper-pagination-custom" id="pricingDots"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="section" id="contact" style="padding:60px 0 80px;">
+        <div class="container">
+            <div class="text-center mb-4">
+                <span class="hero-badge" style="margin-bottom:12px;">Let's Talk</span>
+                <h2 class="section-title reveal">Get In <span class="orange-glow">Touch</span></h2>
+                <p class="section-subtitle reveal">Ready to grow? Send us a message and we'll get back to you.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8 reveal" style="transition-delay:0.1s;">
+                    <div class="contact-wrapper">
+                        <form action="https://formspree.io/f/mvznynee" method="POST">
+                            <div class="form-group">
+                                <label class="form-label">Your Name</label>
+                                <input type="text" name="name" class="form-control" placeholder="Your Name" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="email" class="form-control" placeholder="Email Address" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Message</label>
+                                <textarea name="message" id="messageInput" rows="4" class="form-control" placeholder="Tell us about your project..." required></textarea>
+                            </div>
+                            <button class="btn btn-orange w-100 py-3" style="border-radius:50px;font-weight:700;letter-spacing:0.5px;">
+                                Send Message ✦
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="contact-details">
+                <span><strong>📷 Instagram:</strong> @vantage.digihub</span>
+                <span><strong>✉️ Email:</strong> vantage.digi.hub@gmail.com</span>
+            </div>
+            <div class="socials">
+                <a href="https://www.instagram.com/vantage.digihub/" aria-label="Instagram">📷</a>
+            </div>
+            <p>© 2026 Vantage Digital Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js">
+    </script>
+
+    <script>
+        // ============================================================
+        // 1. CURSOR FOLLOWER
+        // ============================================================
+        (function initCursor() {
+            const cursor = document.getElementById('cursorFollower');
+            let mouseX = 0,
+                mouseY = 0;
+            let currentX = 0,
+                currentY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                const target = e.target;
+                const isInteractive = target.closest('a, button, .service-card, .pricing-card, .about-card, .team-card');
+                cursor.classList.toggle('active', !!isInteractive);
+            });
+
+            function smoothCursor() {
+                currentX += (mouseX - currentX) * 0.12;
+                currentY += (mouseY - currentY) * 0.12;
+                cursor.style.left = currentX + 'px';
+                cursor.style.top = currentY + 'px';
+                requestAnimationFrame(smoothCursor);
+            }
+            smoothCursor();
+        })();
+
+        // ============================================================
+        // 2. SCROLL PROGRESS
+        // ============================================================
+        (function initProgress() {
+            const fill = document.getElementById('progressFill');
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (scrollTop / docHeight) * 100;
+                fill.style.width = progress + '%';
+            });
+        })();
+
+        // ============================================================
+        // 3. PARTICLE CANVAS
+        // ============================================================
+        (function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let w, h, particles = [];
+
+            function resize() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                w = canvas.width;
+                h = canvas.height;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.size = Math.random() * 2.5 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.opacity = Math.random() * 0.35 + 0.05;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > w) this.speedX *= -1;
+                    if (this.y < 0 || this.y > h) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 106, 0, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            const count = Math.min(130, Math.floor((w * h) / 7000));
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+
+            function drawLines() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(255, 106, 0, ${0.05 * (1 - dist / 150)})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => { p.update();
+                    p.draw(); });
+                drawLines();
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        // ============================================================
+        // 4. SCROLL REVEAL
+        // ============================================================
+        (function initReveal() {
+            const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            els.forEach(el => observer.observe(el));
+        })();
+
+        // ============================================================
+        // 5. NAVBAR SCROLL EFFECT
+        // ============================================================
+        (function initNavbar() {
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 60);
+            });
+        })();
+
+        // ============================================================
+        // 6. 3D TILT
+        // ============================================================
+        (function initTilt() {
+            if ('ontouchstart' in window) return;
+            const cards = document.querySelectorAll('[data-tilt]');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 12;
+                    const rotateY = (centerX - x) / 12;
+                    card.style.transform =
+                        `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)';
+                });
+            });
+        })();
+
+        // ============================================================
+        // 7. PRICING SWIPER
+        // ============================================================
+        (function initSwiper() {
+            const swiper = new Swiper('.swiper-pricing', {
+                slidesPerView: 1,
+                spaceBetween: 24,
+                loop: true,
+                grabCursor: true,
+                breakpoints: {
+                    576: { slidesPerView: 1.5, spaceBetween: 24 },
+                    768: { slidesPerView: 2, spaceBetween: 28 },
+                    1024: { slidesPerView: 3, spaceBetween: 30 },
+                },
+                navigation: {
+                    nextEl: '#nextPricing',
+                    prevEl: '#prevPricing',
+                },
+                pagination: {
+                    el: '#pricingDots',
+                    clickable: true,
+                    renderBullet: (index, className) => `<span class="${className}"></span>`,
+                },
+            });
+        })();
+
+        // ============================================================
+        // 8. SMOOTH ANCHOR SCROLL
+        // ============================================================
+        (function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    const target = document.querySelector(href);
+                    if (target) {
+                        e.preventDefault();
+                        const offset = 80;
+                        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                });
+            });
+        })();
+
+        // ============================================================
+        // 9. MARQUEE SEAMLESS LOOP
+        // ============================================================
+        (function initMarquee() {
+            const track = document.getElementById('marqueeTrack');
+            const clone = track.innerHTML;
+            track.innerHTML = clone + clone;
+        })();
+
+        // ============================================================
+        // 10. PRICING → CONTACT AUTO-FILL
+        // ============================================================
+        (function initPricingButtons() {
+            const buttons = document.querySelectorAll('.get-started-btn');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // Find the parent pricing card
+                    const card = this.closest('.pricing-card');
+                    if (!card) return;
+
+                    // Get plan name and price from data attributes
+                    const plan = card.getAttribute('data-plan') || 'Plan';
+                    const price = card.getAttribute('data-price') || '';
+
+                    // Build the message
+                    const message = `Hi Vantage team! 👋\n\nI'm interested in your **${plan}** plan (${price}).\n\nCould you please provide more details about this service and how we can get started?\n\nLooking forward to hearing from you!`;
+
+                    // Navigate to contact section
+                    const contactSection = document.getElementById('contact');
+                    if (contactSection) {
+                        const offset = 80;
+                        const top = contactSection.getBoundingClientRect().top + window.scrollY - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+
+                    // After a short delay, fill the message input
+                    setTimeout(() => {
+                        const messageInput = document.getElementById('messageInput');
+                        if (messageInput) {
+                            messageInput.value = message;
+                            messageInput.focus();
+                            // Trigger a resize event for the textarea (optional)
+                            messageInput.dispatchEvent(new Event('input'));
+                        }
+                    }, 600);
+                });
+            });
+        })();
+    </script>
+
+</body>
+</html>
